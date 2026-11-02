@@ -1,0 +1,118 @@
+/* Jetons repris de la maquette mobile */
+:root {
+  --ink: #161a33;
+  --ink2: #5b6080;
+  --ink3: #8a90ad;
+  --line: #e7e9f3;
+  --bg: #ffffff;
+  --soft: #f3f4fa;
+  --page: #f7f8fc;
+  --indigo: #4b4ded;
+  --indigo-soft: #ecebfe;
+  --violet: #8b5cf6;
+  --teal: #0ea5a4;
+  --good: #16a36a;
+  --good-soft: #e3f6ec;
+  --mid: #c9800a;
+  --mid-soft: #fff3df;
+  --bad: #e5484d;
+  --bad-soft: #fde8e9;
+  --blue-soft: #e6f0ff; --blue: #2f6bf0;
+  --orange-soft: #fdede6; --orange: #e0612e;
+  --purple-soft: #efe9fe; --purple: #7c4deb;
+  --green-soft: #e2f6f2; --green: #0e9483;
+  --radius-l: 24px;
+  --radius-m: 18px;
+  --radius-s: 12px;
+  --gradient: linear-gradient(100deg, var(--indigo) 0%, var(--violet) 55%, var(--teal) 100%);
+  --nav-h: 76px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #eef0fa; --ink2: #b4b9d6; --ink3: #858ba8; --line: #2a2e4a;
+    --bg: #14162a; --soft: #1d2038; --page: #0f1122;
+    --indigo: #8183ff; --indigo-soft: #26285a;
+    --good: #3ccf8e; --good-soft: #143528; --mid: #f0b43e; --mid-soft: #3a2c10;
+    --bad: #ff6b70; --bad-soft: #3f1a1d;
+    --blue-soft: #1b2a4d; --blue: #7fa7ff; --orange-soft: #3d2418; --orange: #ff9a6b;
+    --purple-soft: #2c2350; --purple: #b79cff; --green-soft: #133a35; --green: #4fd1c0;
+    color-scheme: dark;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: Poppins, "Segoe UI", Roboto, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--page);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, p { margin: 0; }
+h1, h2, h3, h4 { font-weight: 500; }
+a { color: var(--indigo); }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; border-radius: 6px; }
+img { max-width: 100%; }
+
+/* Mise en page des pages */
+.page { max-width: 760px; margin: 0 auto; padding: 16px 20px calc(var(--nav-h) + 32px + var(--safe-b)); }
+.page-wide { max-width: 1180px; }
+@media (min-width: 900px) { .page { padding: 32px 40px 48px; } }
+
+.appbar { display: flex; align-items: center; gap: 8px; min-height: 48px; margin-bottom: 8px; }
+.appbar h1 { font-size: 18px; flex: 1; }
+.page-title { font-size: 26px; letter-spacing: -0.3px; }
+.section-label { font-size: 13px; font-weight: 500; color: var(--ink3); margin: 20px 2px 8px; }
+
+/* Boutons */
+.icon-btn {
+  width: 42px; height: 42px; border-radius: 50%; border: 0; background: transparent;
+  display: inline-grid; place-items: center; color: var(--ink);
+}
+.icon-btn:hover { background: var(--soft); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 46px; padding: 0 20px; border-radius: 23px; border: 0; font-weight: 500; font-size: 14px;
+  background: var(--soft); color: var(--ink); text-decoration: none;
+}
+.btn-primary { background: var(--ink); color: var(--bg); }
+.btn-outline { background: transparent; border: 1px solid var(--line); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-sm { height: 36px; padding: 0 14px; font-size: 13px; }
+
+/* Cartes et badges */
+.card { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 14px 16px; }
+.chip-icon { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; flex-shrink: 0; }
+.tone-blue { background: var(--blue-soft); color: var(--blue); }
+.tone-orange { background: var(--orange-soft); color: var(--orange); }
+.tone-purple { background: var(--purple-soft); color: var(--purple); }
+.tone-green { background: var(--green-soft); color: var(--green); }
+.tone-amber { background: var(--mid-soft); color: var(--mid); }
+.tone-grey { background: var(--soft); color: var(--ink2); }
+.tone-red { background: var(--bad-soft); color: var(--bad); }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 500;
+  padding: 4px 11px; border-radius: 14px; white-space: nowrap; }
+.badge.good { background: var(--good-soft); color: var(--good); }
+.badge.mid { background: var(--mid-soft); color: var(--mid); }
+.badge.bad { background: var(--bad-soft); color: var(--bad); }
+.badge.neutral { background: var(--soft); color: var(--ink2); }
+
+.bar { height: 6px; border-radius: 3px; background: var(--soft); overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: 3px; transition: width .6s ease; }
+
+.muted { color: var(--ink3); font-size: 12.5px; }
+.error-box { background: var(--bad-soft); color: var(--bad); border-radius: var(--radius-s); padding: 12px 14px; font-size: 14px; }
+.empty { text-align: center; padding: 48px 16px; color: var(--ink2); }
+.empty h2 { font-size: 18px; color: var(--ink); margin-bottom: 6px; }
+
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

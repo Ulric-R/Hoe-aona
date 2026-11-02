@@ -1,0 +1,17 @@
+{
+  "servers": {
+    "Hoe aona?-tools": {
+      "enabled": true,
+      "command": "python",
+      "args": ["-m", "app.mcp.server"],
+      "description": "Serveur MCP interne : fact-checks, Wikipedia, GDELT, Tavily, Banque mondiale, lecture de pages, détection IA d'images"
+    },
+    "tavily-officiel": {
+      "enabled": false,
+      "command": "npx",
+      "args": ["-y", "tavily-mcp@latest"],
+      "env": {"TAVILY_API_KEY": "${TAVILY_API_KEY}"},
+      "description": "Exemple de serveur MCP externe. Ses outils deviennent appelables via gateway.call(nom_outil, ...)"
+    }
+  }
+}

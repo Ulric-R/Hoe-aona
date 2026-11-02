@@ -1,0 +1,122 @@
+<section class="page settings">
+  <header class="appbar"><h1 class="page-title">Paramètres</h1></header>
+
+  @if (error()) { <p class="error-box" role="alert">{{ error() }}</p> }
+
+  @if (loading()) {
+    <div class="skeleton" aria-busy="true"><span></span><span></span><span></span></div>
+  } @else {
+  @if (prefs(); as p) {
+
+    <h2 class="section-label">Poids des critères dans le score global</h2>
+    <div class="list">
+      @for (w of weights; track w.key) {
+        <div class="opt slider-opt">
+          <span class="ico" [class]="w.tone"><app-icon [name]="w.icon" [size]="18" /></span>
+          <label class="lb" [for]="w.key">{{ w.label }}</label>
+          <span class="vl strong">{{ share(w.key) }} %</span>
+          <input [id]="w.key" type="range" min="0" max="100" step="5" [ngModel]="p[w.key]"
+                 (ngModelChange)="update(w.key, +$event)" [attr.aria-valuetext]="share(w.key) + ' %'">
+        </div>
+      }
+      <div class="opt foot">
+        <span class="muted">Les poids sont ramenés à 100 % automatiquement.</span>
+        <button type="button" class="link-btn" (click)="resetWeights()">Rétablir 40 / 40 / 20</button>
+      </div>
+    </div>
+
+    <h2 class="section-label">Analyse</h2>
+    <div class="list">
+      <div class="opt">
+        <span class="ico tone-purple"><app-icon name="robot" [size]="18" /></span>
+        <label class="lb" for="deep">Détection IA approfondie<small>Envoie les images à Sightengine en plus des signatures locales</small></label>
+        <input id="deep" type="checkbox" class="toggle" role="switch" [ngModel]="p.deep_ai_detection"
+               (ngModelChange)="update('deep_ai_detection', $event)">
+      </div>
+      <div class="opt slider-opt">
+        <span class="ico tone-red"><app-icon name="alert" [size]="18" /></span>
+        <label class="lb" for="ai-th">Exclure une source si probabilité IA ≥<small>Au-delà, la page est retirée du calcul et listée à part</small></label>
+        <span class="vl strong">{{ (p.ai_exclusion_threshold * 100).toFixed(0) }} %</span>
+        <input id="ai-th" type="range" min="0.5" max="0.95" step="0.05" [ngModel]="p.ai_exclusion_threshold"
+               (ngModelChange)="update('ai_exclusion_threshold', +$event)">
+      </div>
+      <div class="opt slider-opt">
+        <span class="ico tone-blue"><app-icon name="shield" [size]="18" /></span>
+        <label class="lb" for="min-rel">Fiabilité minimale d’une preuve<small>Les fact-checks publiés sont toujours conservés</small></label>
+        <span class="vl strong">{{ (p.min_source_reliability * 100).toFixed(0) }} %</span>
+        <input id="min-rel" type="range" min="0" max="0.8" step="0.05" [ngModel]="p.min_source_reliability"
+               (ngModelChange)="update('min_source_reliability', +$event)">
+      </div>
+      <div class="opt">
+        <span class="ico tone-green"><app-icon name="chart" [size]="18" /></span>
+        <label class="lb" for="country">Pays par défaut des statistiques<small>Utilisé quand le contenu ne précise pas de pays</small></label>
+        <select id="country" class="select" [ngModel]="p.default_country" (ngModelChange)="update('default_country', $event)">
+          @for (c of countries; track c.code) { <option [value]="c.code">{{ c.name }}</option> }
+        </select>
+      </div>
+      <div class="opt">
+        <span class="ico tone-orange"><app-icon name="globe" [size]="18" /></span>
+        <label class="lb" for="lang">Langue du rapport et de l’article</label>
+        <select id="lang" class="select" [ngModel]="p.report_language" (ngModelChange)="update('report_language', $event)">
+          <option value="fr">Français</option>
+          <option value="mg">Malagasy</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+    </div>
+
+    <h2 class="section-label">Données</h2>
+    <div class="list">
+      <div class="opt">
+        <span class="ico tone-grey"><app-icon name="history" [size]="18" /></span>
+        <label class="lb" for="ret">Conserver l’historique<small>Les analyses et fichiers plus anciens sont supprimés au redémarrage du serveur</small></label>
+        <select id="ret" class="select" [ngModel]="p.history_retention_days" (ngModelChange)="update('history_retention_days', +$event)">
+          <option [ngValue]="7">7 jours</option>
+          <option [ngValue]="30">30 jours</option>
+          <option [ngValue]="90">90 jours</option>
+          <option [ngValue]="365">1 an</option>
+        </select>
+      </div>
+    </div>
+
+    @if (health(); as h) {
+      <h2 class="section-label">Services connectés</h2>
+      @if (!hasLlm()) {
+        <p class="warn">Aucun LLM configuré : les affirmations sont repérées par heuristique et l’article suit un modèle fixe.
+          Ajoutez une clé Gemini ou Groq gratuite dans <code>backend/.env</code>.</p>
+      }
+      <div class="list">
+        @for (s of h.providers; track s.key) {
+          <div class="opt">
+            <span class="ico" [class]="s.configured ? 'tone-green' : 'tone-grey'">
+              <app-icon [name]="s.configured ? 'check' : 'link'" [size]="18" />
+            </span>
+            <span class="lb">{{ s.label }}<small>{{ s.role }}</small></span>
+            @if (s.configured) {
+              <span class="badge good">{{ s.requires_key ? 'Actif' : 'Sans clé' }}</span>
+            } @else if (s.signup_url) {
+              <a class="badge neutral" [href]="s.signup_url" target="_blank" rel="noopener">Obtenir une clé</a>
+            }
+          </div>
+        }
+      </div>
+      <p class="muted mcp">
+        Mode {{ h.mcp_mode === 'mcp' ? 'MCP' : 'direct' }} : {{ h.mcp_tools.length }} outils disponibles.
+        @for (e of h.mcp_errors; track $index) { <br><span class="err">{{ e }}</span> }
+      </p>
+      @if (missingKeys()) {
+        <p class="muted">Les clés se renseignent côté serveur uniquement (fichier <code>backend/.env</code>), jamais dans le navigateur.</p>
+      }
+    }
+
+    <div class="actions" [class.show]="dirty()">
+      <button type="button" class="btn" (click)="cancel()" [disabled]="saving()">Annuler</button>
+      <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving() || !dirty()">
+        {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
+    </div>
+  }
+  }
+
+  @if (notice()) { <div class="toast" role="status">{{ notice() }}</div> }
+</section>
